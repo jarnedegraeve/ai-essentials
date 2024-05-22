@@ -1,6 +1,15 @@
 import os
 import re
-from bs4 import BeautifulSoup
+import subprocess
+import sys
+
+# Ensure beautifulsoup4 is installed
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    print("beautifulsoup4 not found, installing...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "beautifulsoup4"])
+    from bs4 import BeautifulSoup
 
 def clean_html(html_content):
     # Parse the HTML
@@ -39,9 +48,12 @@ def process_files_in_directory(directory, output_directory=None):
                         output_file.write(cleaned_text)
                     print(f"Cleaned text saved to {output_file_path}")
 
-# Directory containing HTML files
-input_directory = r"D:/ai essentials/erasmus-site-parsed"  # Use raw string or forward slashes
-output_directory = r"D:/ai essentials/erasmus-site-cleaned"  # Use raw string or forward slashes
+# Get the directory where the script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Relative directories containing HTML files
+input_directory = os.path.join(script_dir, 'erasmus-site-parsed')
+output_directory = os.path.join(script_dir, 'erasmus-site-cleaned')
 
 # Process all files in the directory
 process_files_in_directory(input_directory, output_directory)
