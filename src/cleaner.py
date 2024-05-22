@@ -64,5 +64,12 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 input_directory = os.path.join(script_dir, '../erasmus-site-parsed')
 output_directory = os.path.join(script_dir, '../erasmus-site-cleaned')
 
+# Record start time
+start_time = time.time()
+
 # Process all files in the directory
 process_files_in_directory(input_directory, output_directory)
+
+# Calculate total time taken
+total_time = time.time() - start_time
+print(f"Total time taken: {total_time:.2f} seconds")
