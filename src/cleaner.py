@@ -2,7 +2,7 @@ import os
 import re
 import subprocess
 import sys
-
+import time
 # Function to install packages from requirements.txt
 def install_packages():
     requirements_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../requirements.txt')
@@ -46,14 +46,16 @@ def process_files_in_directory(directory, output_directory=None):
             with open(file_path, 'r', encoding='utf-8') as file:
                 html_content = file.read()
                 cleaned_text = clean_html(html_content)
-                print(f"Cleaned text for {filename}:\n{cleaned_text}\n")
+                current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"[{current_time}] Cleaned text for {filename}")
 
                 # Optionally, save the cleaned text to a new file
                 if output_directory:
                     output_file_path = os.path.join(output_directory, f"{os.path.splitext(filename)[0]}_cleaned.txt")
                     with open(output_file_path, 'w', encoding='utf-8') as output_file:
                         output_file.write(cleaned_text)
-                    print(f"Cleaned text saved to {output_file_path}")
+                        current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                    print(f"[{current_time}] Cleaned text saved to {output_file_path}\n")
 
 # Get the directory where the script is located
 script_dir = os.path.dirname(os.path.abspath(__file__))
