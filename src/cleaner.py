@@ -5,7 +5,7 @@ import sys
 
 # Function to install packages from requirements.txt
 def install_packages():
-    requirements_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'requirements.txt')
+    requirements_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../requirements.txt')
     if os.path.isfile(requirements_path):
         print(f"Installing packages from {requirements_path}...")
         subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", requirements_path])
@@ -30,7 +30,7 @@ def clean_html(html_content):
     text_content = soup.get_text(separator=' ')
 
     # Clean the text
-    cleaned_text = re.sub(r'\s+', ' ', text_content).strip()  # Replace multiple spaces/newlines with a single space
+    cleaned_text = re.sub(r'\s+', ' ', text_content).strip()
 
     return cleaned_text
 
@@ -59,8 +59,8 @@ def process_files_in_directory(directory, output_directory=None):
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Relative directories containing HTML files
-input_directory = os.path.join(script_dir, 'erasmus-site-parsed')
-output_directory = os.path.join(script_dir, 'erasmus-site-cleaned')
+input_directory = os.path.join(script_dir, '../erasmus-site-parsed')
+output_directory = os.path.join(script_dir, '../erasmus-site-cleaned')
 
 # Process all files in the directory
 process_files_in_directory(input_directory, output_directory)
