@@ -3,13 +3,20 @@ import re
 import subprocess
 import sys
 
-# Ensure beautifulsoup4 is installed
-try:
-    from bs4 import BeautifulSoup
-except ImportError:
-    print("beautifulsoup4 not found, installing...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "beautifulsoup4"])
-    from bs4 import BeautifulSoup
+# Function to install packages from requirements.txt
+def install_packages():
+    requirements_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'requirements.txt')
+    if os.path.isfile(requirements_path):
+        print(f"Installing packages from {requirements_path}...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", requirements_path])
+    else:
+        print(f"No requirements.txt found at {requirements_path}")
+
+# Ensure required packages are installed
+install_packages()
+
+# Import BeautifulSoup after attempting to install required packages
+from bs4 import BeautifulSoup
 
 def clean_html(html_content):
     # Parse the HTML
