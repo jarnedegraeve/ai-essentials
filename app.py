@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -155,4 +155,7 @@ def send_message():
     return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
+    # Create all database tables before starting the app
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
