@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -7,6 +7,7 @@ import re
 import openai
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -32,6 +33,12 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+
+class ChatMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    role = db.Column(db.String(10), nullable=False)  # 'user' or 'bot'
+    content = db.Column(db.Text, nullable=False)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -91,10 +98,21 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    if 'chat_messages' not in session:
-        session['chat_messages'] = []
+    # Retrieve chat messages associated with the current user
+    chat_messages = ChatMessage.query.filter_by(user_id=current_user.id).all()
 
-    return render_template('dashboard.html', username=current_user.username, chat_messages=session['chat_messages'])
+    return render_template('dashboard.html', username=current_user.username, chat_messages=chat_messages)
+
+@app.route('/clear_chat', methods=['GET', 'POST'])
+@login_required
+def clear_chat():
+    # Delete all chat messages associated with the current user
+    ChatMessage.query.filter_by(user_id=current_user.id).delete()
+    db.session.commit()
+
+    flash('Chat history cleared successfully.', 'info')
+    return redirect(url_for('dashboard'))
+
 
 @app.route('/send_message', methods=['POST'])
 @login_required
@@ -122,18 +140,19 @@ def send_message():
         }
     )
 
-    # Extract the content of the bot response
-    bot_response_content = response.choices[0].message.content
-
-    # Store the user message and bot response in chat_messages
-    chat_messages = session.get('chat_messages', [])
-    chat_messages.append({"role": "user", "content": message})
-    chat_messages.append({"role": "bot", "content": bot_response_content})
-    session['chat_messages'] = chat_messages
+    # Save the user message to the database
+    new_user_message = ChatMessage(user_id=current_user.id, role='user', content=message)
+    db.session.add(new_user_message)
     
+    # Process and save bot response to the database
+    if response and response.choices:
+        bot_response_content = response.choices[0].message.content
+        new_bot_message = ChatMessage(user_id=current_user.id, role='bot', content=bot_response_content)
+        db.session.add(new_bot_message)
+
+    db.session.commit()
+
     return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)

@@ -95,6 +95,7 @@
 <body>
     <div class="chat-container">
         <a href="{{ url_for('logout') }}" class="button logout">Logout</a>
+        <a href="{{ url_for('clear_chat') }}" class="button clear-chat">Clear Chat</a> <!-- New button -->
 
         <div class="chat-messages">
             {% for message in chat_messages %}
