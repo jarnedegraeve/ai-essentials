@@ -5,98 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 0;
-        }
-
-        .chat-container {
-            max-width: 800px;
-            margin: 20px auto;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .chat-messages {
-            padding: 10px;
-            overflow-y: scroll;
-            max-height: 400px;
-        }
-
-        .chat-message {
-            background-color: #f9f9f9;
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-            clear: both;
-            width: 70%;
-            float: left;
-        }
-
-        .user-message {
-            background-color: #007bff;
-            color: #fff;
-            float: right;
-        }
-
-        .bot-message {
-            background-color: #f1f1f1;
-            float: left;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .logout {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-
-        .input-container {
-            padding: 10px;
-            background-color: #fff;
-            border-top: 1px solid #ccc;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-        }
-
-        .input-field {
-            flex: 1;
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .send-button {
-            padding: 5px 10px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            margin-left: 10px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
-    <div class="chat-container">
+    <div class="top-buttons">
         <a href="{{ url_for('logout') }}" class="button logout">Logout</a>
-        <a href="{{ url_for('clear_chat') }}" class="button clear-chat">Clear Chat</a> <!-- New button -->
+        <a href="{{ url_for('clear_chat') }}" class="button clear-chat">Clear Chat</a>
+    </div>
 
+    <div class="chat-container">
         <div class="chat-messages">
             {% for message in chat_messages %}
                 <div class="chat-message {{ message.role }}-message">

@@ -110,7 +110,6 @@ def clear_chat():
     ChatMessage.query.filter_by(user_id=current_user.id).delete()
     db.session.commit()
 
-    flash('Chat history cleared successfully.', 'info')
     return redirect(url_for('dashboard'))
 
 
