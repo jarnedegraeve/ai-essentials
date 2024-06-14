@@ -122,7 +122,7 @@ def send_message():
     response = client.chat.completions.create(
         model=deployment,
         messages=[
-            {"role": "system", "content": "Assistant is an intelligent chatbot designed to help users answer their erasmushogeschool brussel questions. Instructions: - Only answer questions related to erasmushogeschool Brussel. - If you're unsure of an answer, you can say 'I don't know' or 'I'm not sure' and recommend users to mail their question to help@ehb.be."},
+            
             {"role": "user", "content": message},
         ],
         extra_body={
@@ -132,9 +132,11 @@ def send_message():
                     "parameters": {
                         "endpoint": os.getenv("SEARCH_ENDPOINT"),
                         "key": os.getenv("SEARCH_KEY"),
-                        "indexName": "aiessdatatobot-index"
+                        "indexName": "aiessdatatobot-index",
+                        "role_information": "Assistant is an intelligent chatbot designed to help users answer their erasmushogeschool brussel questions. Instructions: - Only answer questions related to erasmushogeschool Brussel. - If you're unsure of an answer, you can say 'I don't know' or 'I'm not sure' and recommend users to mail their question to help@ehb.be."
                     }
                 }
+
             ]
         }
     )
@@ -143,15 +145,21 @@ def send_message():
     new_user_message = ChatMessage(user_id=current_user.id, role='user', content=message)
     db.session.add(new_user_message)
     
-    # Process and save bot response to the database
+    # Process and save bot response to the database if it's valid
     if response and response.choices:
         bot_response_content = response.choices[0].message.content
-        new_bot_message = ChatMessage(user_id=current_user.id, role='bot', content=bot_response_content)
-        db.session.add(new_bot_message)
-
-    db.session.commit()
+        
+        # Remove [doc1], [doc2], ... from the bot response
+        cleaned_response = re.sub(r'\[doc\d+\]', '', bot_response_content)
+        cleaned_response = cleaned_response.strip()  # Remove leading/trailing whitespace
+        
+        if cleaned_response:
+            new_bot_message = ChatMessage(user_id=current_user.id, role='bot', content=cleaned_response)
+            db.session.add(new_bot_message)
+            db.session.commit()
 
     return redirect(url_for('dashboard'))
+
 
 if __name__ == '__main__':
     # Create all database tables before starting the app
