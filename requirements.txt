@@ -1,3 +1,5 @@
+#pip install --user -r .\requirements.txt
+#sometimes people need to add --user, not everybody though
 requests
 beautifulsoup4
 tqdm
@@ -5,4 +7,6 @@ Flask
 Flask-SQLAlchemy
 Flask-Bcrypt
 Flask-Login
+openai
+python-dotenv
 datetime
