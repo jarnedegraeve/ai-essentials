@@ -25,7 +25,6 @@ This project is a Flask web application that incorporates user authentication, c
 1. **Clone the repository**:
     ```bash
     git clone https://github.com/jarnedegraeve/ai-essentials.git
-    cd yourproject
     ```
 
 2. **Install the dependencies**:
